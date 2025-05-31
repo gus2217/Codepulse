@@ -21,12 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Codepulse.Model\Codepulse.Model.csproj" />
+    <ProjectReference Include="..\Codepulse.API.Application\Codepulse.API.Application.csproj" />
+    <ProjectReference Include="..\Codepulse.API.Domain\Codepulse.API.Domain.csproj" />
+    <ProjectReference Include="..\Codepulse.API.Infrastructure\Codepulse.API.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Scripts\" />
-    <Folder Include="Images\" />
+    <Folder Include="Postman\" />
   </ItemGroup>
 
 </Project>

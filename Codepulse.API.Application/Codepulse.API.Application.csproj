@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Codepulse.API.Domain\Codepulse.API.Domain.csproj" />
+    <ProjectReference Include="..\Codepulse.API.Infrastructure\Codepulse.API.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\BlogPost\Interfaces\" />
+    <Folder Include="Features\BlogPost\Services\" />
+    <Folder Include="Mappers\Category\" />
+  </ItemGroup>
+
+</Project>

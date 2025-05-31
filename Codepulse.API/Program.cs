@@ -1,16 +1,15 @@
-using Codepulse.API.Data;
-using Codepulse.API.Repositories.Implementations;
-using Codepulse.API.Repositories.Interfaces;
+using System.Text;
+using Codepulse.API.Application;
+using Codepulse.API.Domain.Entities;
+using Codepulse.API.Infrastructure;
+using Codepulse.API.Infrastructure.Persistence;
 using Codepulse.API.Utils;
-using Codepulse.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Net.NetworkInformation;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +19,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<CodepulseDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("CodepulseConnectionString")
 ));
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+
+// Application layer services
+builder.Services.AddApplicationServices();
+
+// Infrastructure layer services (e.g., repositories)
+builder.Services.AddInfrastructureServices();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

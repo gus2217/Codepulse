@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Codepulse.API.DTOs.Category;
-using Codepulse.API.Repositories.Interfaces;
-using Codepulse.Model;
+using Codepulse.API.Application.DTOs.Category;
+using Codepulse.API.Domain.Entities;
+using Codepulse.API.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
