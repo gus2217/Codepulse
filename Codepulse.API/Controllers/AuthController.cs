@@ -9,12 +9,10 @@ namespace Codepulse.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-
         public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
-
         [HttpPost]
         [Route("Role")]
         public async Task<IActionResult> CreateRole([FromBody] RoleNameDto roleNameDto)
@@ -28,7 +26,7 @@ namespace Codepulse.API.Controllers
 
             return BadRequest(result.Errors);
         }
-
+        
         [HttpGet]
         [Route("Role")]
         public async Task<IActionResult> GetRoles()
@@ -62,7 +60,5 @@ namespace Codepulse.API.Controllers
 
             return BadRequest(result);
         }
-
-
     }
 }

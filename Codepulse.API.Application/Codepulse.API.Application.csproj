@@ -15,10 +15,4 @@
     <ProjectReference Include="..\Codepulse.API.Infrastructure\Codepulse.API.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\BlogPost\Interfaces\" />
-    <Folder Include="Features\BlogPost\Services\" />
-    <Folder Include="Mappers\Category\" />
-  </ItemGroup>
-
 </Project>

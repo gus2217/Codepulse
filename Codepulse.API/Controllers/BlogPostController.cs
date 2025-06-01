@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Codepulse.API.Application.DTOs.BlogPost;
-using Codepulse.API.Domain.Entities;
-using Codepulse.API.Domain.Interfaces;
+﻿using Codepulse.API.Application.DTOs.BlogPost;
+using Codepulse.API.Application.Features.Blog.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,42 +9,24 @@ namespace Codepulse.API.Controllers
     [ApiController]
     public class BlogPostController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IBlogPostRepository _blogPostRepository;
-        private readonly ICategoryRepository _categoryRepository;
-
-        public BlogPostController(IMapper mapper, IBlogPostRepository blogPostRepository, ICategoryRepository categoryRepository)
+        private readonly IBlogPostService _blogPostService;
+        public BlogPostController(IBlogPostService blogPostService)
         {
-            _mapper = mapper;
-            _blogPostRepository = blogPostRepository;
-            _categoryRepository = categoryRepository;
+            _blogPostService = blogPostService;
         }
 
         [HttpPost]
         [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateBlogPostRequestDto createBlogPostRequestDto)
         {
-            var blogPostDomain = _mapper.Map<BlogPost>(createBlogPostRequestDto);
-            blogPostDomain.Categories = new List<Category>();
-            foreach (var categoryId in createBlogPostRequestDto.Categories)
-            {
-                var existingCategory = await _categoryRepository.GetByIdAsync(categoryId);
-                if (existingCategory != null)
-                {
-                    blogPostDomain.Categories.Add(existingCategory);
-                }
-            }
-            blogPostDomain = await _blogPostRepository.CreateAsync(blogPostDomain);
-            return Ok(_mapper.Map<BlogPostToDisplay>(blogPostDomain));
-
+            var createdPost = await _blogPostService.CreateAsync(createBlogPostRequestDto);
+            return Ok(createdPost);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<BlogPost> blogPosts = await _blogPostRepository.GetAllAsync();
-            List<BlogPostToDisplay> blogPostToDisplays = _mapper.Map<List<BlogPostToDisplay>>(blogPosts);
+            var blogPostToDisplays = await _blogPostService.GetAllAsync();
             return Ok(blogPostToDisplays);
         }
 
@@ -54,21 +34,24 @@ namespace Codepulse.API.Controllers
         [Route("{id:long}")]
         public async Task<IActionResult> GetById([FromRoute] long id)
         {
-            var blogPost = await _blogPostRepository.GetByIdAsync(id);
+            var blogPost = await _blogPostService.GetByIdAsync(id);
 
-            if (blogPost == null) return NotFound();
+            if (blogPost == null)
+                return NotFound();
 
-            return Ok(_mapper.Map<BlogPostToDisplay>(blogPost));
+            return Ok(blogPost);
         }
+
         [HttpGet]
         [Route("{urlHandle}")]
         public async Task<IActionResult> GetByUrlHandle([FromRoute] string urlHandle)
         {
-            var blogPost = await _blogPostRepository.GetByUrlAsync(urlHandle);
+            var blogPost = await _blogPostService.GetByUrlHandleAsync(urlHandle);
 
-            if (blogPost == null) return NotFound();
+            if (blogPost == null)
+                return NotFound();
 
-            return Ok(_mapper.Map<BlogPostToDisplay>(blogPost));
+            return Ok(blogPost);
         }
 
         [HttpPut]
@@ -76,44 +59,25 @@ namespace Codepulse.API.Controllers
         [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] long id, [FromBody] BlogPostToUpdate blogPostToUpdate)
         {
+            var updatedBlogPost = await _blogPostService.UpdateAsync(id, blogPostToUpdate);
 
-            var blogPostDomain = _mapper.Map<BlogPost>(blogPostToUpdate);
-            blogPostDomain.Id = id;
-            blogPostDomain.Categories = new List<Category>();
-            foreach (var categoryId  in blogPostToUpdate.Categories)
-            {
-                var existingCategory = await _categoryRepository.GetByIdAsync(categoryId);
-                if (existingCategory != null)
-                {
-                    blogPostDomain.Categories.Add(existingCategory);
-                }
-            }
-
-            blogPostDomain = await _blogPostRepository.UpdateAsync(blogPostDomain);
-         
-            if (blogPostDomain == null)
-            {
+            if (updatedBlogPost == null)
                 return NotFound();
-            }
-            return Ok(_mapper.Map<BlogPostToDisplay>(blogPostDomain));
 
+            return Ok(updatedBlogPost);
         }
 
         [HttpDelete]
         [Route("{id:long}")]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Delete([FromRoute,] long id)
+        public async Task<IActionResult> Delete([FromRoute] long id)
         {
-            var blogPost = await _blogPostRepository.DeleteAsync(id);
+            var blogPost = await _blogPostService.DeleteAsync(id);
 
             if (blogPost == null)
-            {
                 return NotFound();
-            }
 
-            return Ok(_mapper.Map<BlogPostToDisplay>(blogPost));
+            return Ok(blogPost);
         }
-
-
     }
 }
